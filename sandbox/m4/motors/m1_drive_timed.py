@@ -63,8 +63,8 @@ Authors: David Fisher and Group 24.
 #     motor encoders, so just make a simple rough approximation here, since later we'll do it better in a different way.
 #
 
-    speed_in_inches_per_second = 0.009 * speed_in_degrees_per_second
-    time = distance / speed_in_inches_per_second
+    #speed_in_inches_per_second = 0.009 * speed_in_degrees_per_second
+    #time = distance / speed_in_inches_per_second
 
 # TODO: 3. Copy the content of the /examples/motors/drive_input_speed.py program and place it below these comments.
 #   Change the initial print and speak commands to reflect this module, like this...
@@ -72,6 +72,10 @@ Authors: David Fisher and Group 24.
 #    print("  Timed Driving")
 #    print("--------------------------------------------")
 #    ev3.Sound.speak("Timed Driving").wait()
+
+
+import ev3dev.ev3 as ev3
+import time
 
 def main():
     print("--------------------------------------------")
@@ -96,6 +100,7 @@ def main():
         speed_in_inches_per_second = 0.009 * total_sp
         time_s = distance / speed_in_inches_per_second
         time.sleep(time_s)
+        print(time_s)
         left_motor.stop()
         right_motor.stop(stop_action="brake")
 
@@ -115,6 +120,10 @@ def main():
 #      time.sleep(some_amount)
 #      stop()
 #   You may NOT use the advanced motor commands at this time like: run_to_abs_pos, run_to_rel_pos, or run_timed.
+
+
+
+
 # TODO: 6. Modify the program so that it will exit immediately if the answer to   any   question is 0.
 # TODO: 7. Formally test your work. When you think you have the problem complete run these tests to be sure:
 #   200 dps 24 inches (make sure it drives within 6 inches of the target distance)
