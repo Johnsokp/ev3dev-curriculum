@@ -20,9 +20,24 @@ class Snatch3r(object):
     """Commands for the Snatch3r robot that might be useful in many different programs."""
 
     def __init__(self):
-        #construct and store left and right motors
-        self.left_motor = #0dsjj
-        assert self.left_motor
+        # Connect two large motors on output ports B and C
+        self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
+        self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
 
-    # TODO: Implement the Snatch3r class as needed when working the sandox exercises
-    # (and delete these comments)
+        # Check that the motors are actually connected
+        assert self.left_motor.connected
+        assert self.right_motor.connected
+
+    def drive_inches(self, inch_target, speed):
+        degrees_per_inch = 90
+        motor_turns_needed_in_degrees = inch_target * \
+                                        degrees_per_inch
+        self.left_motor.run_to_rel_pos(
+            position_sp=motor_turns_needed_in_degrees,
+            speed_sp=speed,
+            stop_action="brake")
+        self.right_motor.run_to_rel_pos(
+            position_sp=motor_turns_needed_in_degrees, speed_sp=speed,
+            stop_action="brake")
+        self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
