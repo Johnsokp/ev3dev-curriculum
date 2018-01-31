@@ -44,7 +44,7 @@ Authors: David Fisher and Group 24.
 #     900 degrees / second  -->  traveled 40 inches  -->  8 inches / second
 #  (probably no faster than 800)
 #
-# TODO: 3. Make an equation
+# Done: 3. Make an equation
 #   Derive from that information a way to convert a given degrees per second speed into an inches / second speed.
 #     If you plotted the data with degrees / second on the x axis and inches per second on the y axis you would find the
 #       data is fairly linear, so you could use a    y = m * x + b   line approximation formula.  Excel could even help
@@ -97,7 +97,7 @@ def main():
         distance = int(input("Distance to travel (inches): "))
         left_motor.run_forever(speed_sp=total_sp)
         right_motor.run_forever(speed_sp=total_sp)
-        speed_in_inches_per_second = 0.009 * total_sp
+        speed_in_inches_per_second = 0.0116 * total_sp
         time_s = distance / speed_in_inches_per_second
         time.sleep(time_s)
         print(time_s)
@@ -114,7 +114,8 @@ def main():
 # to:
 #   Enter a speed (0 to 900 dps):
 #   Distance to travel (inches):
-# TODO: 5. Write the code necessary to make the robot drive at that speed going roughly that distance.
+# Done: 5. Write the code necessary to make the robot drive at that speed going
+#  roughly that distance.
 #   Note, in this module, you are REQUIRED to use the pattern...
 #      run_forever()
 #      time.sleep(some_amount)
@@ -124,8 +125,10 @@ def main():
 
 
 
-# TODO: 6. Modify the program so that it will exit immediately if the answer to   any   question is 0.
-# TODO: 7. Formally test your work. When you think you have the problem complete run these tests to be sure:
+# Done: 6. Modify the program so that it will exit immediately if the answer to
+#    any   question is 0.
+# Done: 7. Formally test your work. When you think you have the problem
+# complete run these tests to be sure:
 #   200 dps 24 inches (make sure it drives within 6 inches of the target distance)
 #   400 dps 24 inches (make sure it drives within 6 inches of the target distance)
 #   800 dps 24 inches (make sure it drives within 6 inches of the target distance)
@@ -133,7 +136,8 @@ def main():
 #   400 dps 36 inches (make sure it drives within 9 inches of the target distance)
 # Do more tests if you see fit.  Ideally you should be +/- 25% of the target goal.
 #
-# TODO: 8. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
+# Done: 8. Call over a TA or instructor to sign your team's checkoff sheet and
+# do a code review.
 #
 #  Observation you should make, the pattern run_forever-->time.sleep-->stop naturally blocks code execution until done.
 
