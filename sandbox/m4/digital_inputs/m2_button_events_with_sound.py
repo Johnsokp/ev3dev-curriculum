@@ -127,7 +127,7 @@ def handle_right_button(button_state):
 # to instead say "Press Back to exit this program."
 
 def handle_shutdown(button_state, dc):
-    if button_state == True:
+    if button_state:
         print('back')
         dc.running = False
 
