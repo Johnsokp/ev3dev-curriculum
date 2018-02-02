@@ -125,7 +125,7 @@ def main():
 
 
 
-        # TODO: 5. Formally test your work. When you think you have the problem complete run these tests:
+        # Done: 5. Formally test your work. When you think you have the problem complete run these tests:
         #   Press Left - Green left LED is on (try holding the button down for a few seconds when you to the press)
         #   Press Right - Right right LED is on
         #   Press Up - Both LEDs are off
@@ -137,7 +137,7 @@ def main():
         #   Press Down - Both LEDs are Red (the cycle repeats)
         #   Press Back - Both LEDs turn Green, the robot says Goodbye and the program exits
 
-        # TODO: 6. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
+        # Done: 6. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
         #
         # Observation you should make, working with buttons as 'states' is functional but usually 'events' work better.
         # Also observe that we don't use the Enter button.  Enter can cause issues since your program is running at the
