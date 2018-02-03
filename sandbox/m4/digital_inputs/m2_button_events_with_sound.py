@@ -92,19 +92,23 @@ def main():
 # Once implemented test your code by trying all four buttons.  Observe the print messages and sounds played.
 #   The recommended test order is up, down, left, then right (each gets more interesting in that order)
 #   When you finish that test hit Back to exit the program.
+
 def handle_up_button(button_state):
     """Handle IR / button event."""
     if button_state == True:
         print("Up button is pressed")
         play_song_by_individual_tones()
+
 def handle_down_button(button_state):
     if button_state == True:
         print("Down button is pressed")
         play_song_by_notes_list()
+
 def handle_left_button(button_state):
     if button_state == True:
         print("Left button is pressed")
         speak()
+
 def handle_right_button(button_state):
     if button_state == True:
         print('Right button is pressed')
