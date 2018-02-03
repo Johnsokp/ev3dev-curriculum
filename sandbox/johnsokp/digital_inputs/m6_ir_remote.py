@@ -107,6 +107,7 @@ def main():
     # Once the library is implemented any team member should be able to run his code as stated in todo3.
     robot.shutdown()
 
+
 # ----------------------------------------------------------------------
 # Event handlers
 # Some event handlers have been written for you (ones for the arm).
