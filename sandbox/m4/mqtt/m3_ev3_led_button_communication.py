@@ -32,8 +32,8 @@ communication.  Summary of the communication:
 Implement the TODOs below to complete this module, then transfer the file to the EV3 (as done in many previous units),
   then run this module on the EV3 while at the same time, running m3_pc_led_button_communication.py on your PC.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Group 24.
+"""  # Done: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 
 import mqtt_remote_method_calls as com
@@ -80,11 +80,16 @@ def main():
     print("--------------------------------------------")
     ev3.Sound.speak("LED Button communication").wait()
 
-    # TODO: 3. Create an instance of your delegate class and an MQTT client, passing in the delegate object.
+    # Done: 3. Create an instance of your delegate class and an MQTT client,
+    # passing in the delegate object.
     # Note: you can determine the variable names that you should use by looking at the errors underlined in later code.
     # Once you have that done connect the mqtt_client to the MQTT broker using the connect_to_pc method.
     # Note: on EV3 you call connect_to_pc, but in the PC code it will call connect_to_ev3
 
+    canvas = 'Ev3_Led button'
+    ev3_delegate = MyDelegate(canvas)
+    mqtt_client = com.MqttClient(ev3_delegate)
+    mqtt_client.connect_to_pc()
 
     # Buttons on EV3 (these obviously assume TO DO: 3. is done)
     btn = ev3.Button()
@@ -102,6 +107,8 @@ def main():
     ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
     ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
 
+def set_led(led_side_string,led_color_string):
+
 
 # ----------------------------------------------------------------------
 # Button event callback functions
@@ -116,6 +123,9 @@ def handle_button_press(button_state, mqtt_client, button_name):
         #   -- Pass the parameters [button_name] as a list.
         # This is meant to help you learn the mqtt_client.send_message syntax.
         # You can review the code above to understand how button_name is passed into this function.
+
+        mqtt_client.send_message("button_pressed",
+                                 [button_name])
 
 
 # TODO: 5. Run this program on your EV3 and run m3_pc_led_button_communication.py on your PC at the same time.
