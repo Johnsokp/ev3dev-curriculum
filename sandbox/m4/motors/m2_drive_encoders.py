@@ -66,15 +66,20 @@ def main():
 
     time_s = 1  # Any value other than 0.
     while time_s != 0:
-        inch_target = int(input("Distance to travel (inches): "))
+        left_motor.position_sp = int(input("Distance to travel (inches): "))
+        right_motor.position_sp = left_motor.position_sp
         degrees_per_inch = 90
-        motor_turns_needed_in_degrees = inch_target * \
+        motor_turns_needed_in_degrees = left_motor.position_sp * \
                                         degrees_per_inch
-        speed = int(input("Enter a speed (0 to 900 dps): "))
-        left_motor.run_to_rel_pos(position_sp=motor_turns_needed_in_degrees,
-                                  speed_sp=speed,
-                                  stop_action="brake")
-        right_motor.run_to_rel_pos(position_sp=motor_turns_needed_in_degrees, speed_sp=speed, stop_action="brake")
+        left_motor.speed_sp = int(input("Enter a speed (0 to 900 dps): "))
+        right_motor.speed_sp = left_motor.speed_sp
+
+        stop_action = ev3.Motor.STOP_ACTION_BRAKE
+        left_motor.run_to_rel_pos(motor_turns_needed_in_degrees,speed_sp,
+                                  stop_action)
+        right_motor.run_to_rel_pos(motor_turns_needed_in_degrees,speed_sp,
+                                   stop_action)
+
         left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         right_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
