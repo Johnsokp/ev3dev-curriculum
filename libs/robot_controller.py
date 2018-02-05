@@ -35,6 +35,9 @@ class Snatch3r(object):
         assert self.touch_sensor
 
     def drive_inches(self, inch_target, speed):
+        """drives robot forward or backward at a specified speed depending on
+        whether the distance is postive or negative"""
+
         degrees_per_inch = 90
         motor_turns_needed_in_degrees = inch_target * \
                                         degrees_per_inch
@@ -49,6 +52,9 @@ class Snatch3r(object):
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
+        """Turns robot to the specified degree at a specified speed. Turns
+        left if the degree is positive and right if the degree is negative."""
+
         length = math.fabs(degrees_to_turn) * 0.049
         degrees_per_inch = 90
         motor_turns_needed_in_degrees = length * \
@@ -77,6 +83,9 @@ class Snatch3r(object):
             self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
     def arm_calibration(self):
+        """Lifts the robots arm until the touch sensor is pressed, then it
+        lowers the arm 14.2 revolutions and sets the position to 0"""
+
         self.arm_motor.run_forever(speed_sp=self.max_speed)
 
         while not self.touch_sensor.is_pressed:
@@ -93,6 +102,9 @@ class Snatch3r(object):
         self.arm_motor.position = 0
 
     def arm_up(self):
+        """Lifts the robots arm until the touch sensor is pressed, then it
+        stops"""
+
         self.arm_motor.run_forever(speed_sp=self.max_speed)
         while not self.touch_sensor.is_pressed:
             time.sleep(0.01)
@@ -100,12 +112,16 @@ class Snatch3r(object):
         ev3.Sound.beep()
 
     def arm_down(self):
+        """Lowers the arms to the 0 position defined from calibration"""
+
         self.arm_motor.run_to_abs_pos(position_sp=0, speed_sp=self.max_speed)
         self.arm_motor.wait_while(
             ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
         ev3.Sound.beep()
 
     def shutdown(self):
+        """Stops all robot actions and exits code"""
+
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
 
