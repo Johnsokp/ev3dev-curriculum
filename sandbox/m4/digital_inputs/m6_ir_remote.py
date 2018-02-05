@@ -74,10 +74,10 @@ def main():
     rc1 = ev3.RemoteControl(channel=1)
     assert rc1.connected
 
-    rc1.on_red_up = lambda state: handle_left_forward(state, dc)
-    rc1.on_red_down = lambda state: handle_left_backward(state, dc)
-    rc1.on_blue_up = lambda state: handle_right_forward(state, dc)
-    rc1.on_blue_down = lambda state: handle_right_backward(state, dc)
+    rc1.on_red_up = lambda state: handle_left_forward(state, left_motor)
+    rc1.on_red_down = lambda state: handle_left_backward(state, left_motor)
+    rc1.on_blue_up = lambda state: handle_right_forward(state, right_motor)
+    rc1.on_blue_down = lambda state: handle_right_backward(state, right_motor)
 
     rc2 = ev3.RemoteControl(channel=2)
     assert rc2.connected
@@ -118,7 +118,7 @@ def main():
 # ----------------------------------------------------------------------
 # IR Remote callbacks
 # ----------------------------------------------------------------------
-def handle_left_forward(button_state, dc):
+def handle_left_forward(button_state, left_motor):
     """
     Handle IR event.
 
@@ -128,10 +128,13 @@ def handle_left_forward(button_state, dc):
     """
     if button_state:
         ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
-        #left_motor.run_forever()
+        left_motor.run_forever(speed_sp=600)
+    else:
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+        left_motor.stop(stop_action="brake")
 
 
-def handle_left_backward(button_state, dc):
+def handle_left_backward(button_state, left_motor):
     """
     Handle IR event.
 
@@ -139,11 +142,15 @@ def handle_left_backward(button_state, dc):
       :type button_state: bool
       :type dc: DataContainer
     """
-    #if button_state:
+    if button_state:
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+        left_motor.run_forever(speed_sp=-600)
+    else:
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+        left_motor.stop(stop_action="brake")
 
 
-
-def handle_right_forward(button_state, dc):
+def handle_right_forward(button_state, right_motor):
     """
     Handle IR event.
 
@@ -151,11 +158,16 @@ def handle_right_forward(button_state, dc):
       :type button_state: bool
       :type dc: DataContainer
     """
-    #if button_state:
+    if button_state:
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+        right_motor.run_forever(speed_sp=600)
+    else:
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+        right_motor.stop(stop_action="brake")
 
 
 
-def handle_right_backward(button_state, dc):
+def handle_right_backward(button_state, right_motor):
     """
     Handle IR event.
 
@@ -163,7 +175,12 @@ def handle_right_backward(button_state, dc):
       :type button_state: bool
       :type dc: DataContainer
     """
-    #if button_state:
+    if button_state:
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+        right_motor.run_forever(speed_sp=-600)
+    else:
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+        right_motor.stop(stop_action="brake")
 
 
 
