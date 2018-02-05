@@ -26,7 +26,7 @@ def main():
     # For teams of 3 just have 2 people talk to each other and the other person can just watch this time.
     my_name = "Caitlin"  # Used to set the topic that you are *subscribed to*
     # listen to
-    team_member_name = "Team 24"  # Used to set the topic that you will
+    team_member_name = "Team24"  # Used to set the topic that you will
     # *publish to*
 
     # What happens if you set my_name and team_member_name to the same value?
