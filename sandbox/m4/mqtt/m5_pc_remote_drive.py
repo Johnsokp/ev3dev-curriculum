@@ -13,7 +13,7 @@ You will need to have the following features:
     -- If both become set to 300 all of the drive direction buttons will go slower, for example reverse goes -300 -300
     -- If 500 then left does -500 500, which causes the robot to spin left (use half speed -250 250 if too fast)
     -- If set differently to say 600 left, 300 right the robot will drive and arc, for example forward goes 600 300
-  -- In addition to the drive features there needs to be a clickable button for Arm Up and Arm Down
+  -- In addition to the drive features there needs to be a clickable button for Arm Up and Arm D`own
     -- There also need to be keyboard shortcut for Arm Up (u) and Arm Down (j).  Arm calibration is not required.
 
   -- Finally you need 2 buttons for ending your program:

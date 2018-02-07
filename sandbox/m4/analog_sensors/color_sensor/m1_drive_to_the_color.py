@@ -89,13 +89,12 @@ def drive_to_color(button_state, robot, color_to_seek):
     """
     if button_state:
         ev3.Sound.speak("Seeking " + COLOR_NAMES[color_to_seek]).wait()
-        #robot.forward(100, 100)
-        robot.left_motor.run_forever(speed_sp= 100)
-        robot.right_motor.run_forever(speed_sp= 100)
-        #print(robot.color_sensor.color())
 
-        #if color_to_seek:
-            #robot.stop()
+        while robot.color_sensor.color != color_to_seek:
+            robot.forward(100, 100)
+            print(robot.color_sensor.color)
+
+        robot.stop()
 
 
         # DONE: 3. Implement the task as stated in this module's initial
