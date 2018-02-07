@@ -122,11 +122,49 @@ class Snatch3r(object):
     def shutdown(self):
         """Stops all robot actions and exits code"""
 
+        self.running = False
+
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
+        self.arm_motor.stop(stop_action="brake")
 
         ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
         ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
 
         print('Goodbye')
         ev3.Sound.speak("Goodbye").wait()
+
+    def loop_forever(self):
+        # This is a convenience method that I don't really recommend for most programs other than m5.
+        #   This method is only useful if the only input to the robot is coming via mqtt.
+        #   MQTT messages will still call methods, but no other input or output happens.
+        # This method is given here since the concept might be confusing.
+        self.running = True
+        while self.running:
+            time.sleep(
+                0.1)  # Do nothing (except receive MQTT messages) until an MQTT message calls shutdown.
+
+    def stop(self):
+        """Stops all robot actions"""
+
+        self.left_motor.stop(stop_action="brake")
+        self.right_motor.stop(stop_action="brake")
+        self.arm_motor.stop(stop_action="brake")
+
+    def forward(self, left_speed_entry, right_speed_entry):
+        """moves robot forward at specified speed"""
+        self.left_motor.run_forever(speed_sp=left_speed_entry)
+        self.right_motor.run_forever(speed_sp=right_speed_entry)
+
+    def left(self, left_speed_entry):
+        """moves robots left track forward at specified speed"""
+        self.left_motor.run_forever(speed_sp=left_speed_entry)
+
+    def back(self, left_speed_entry, right_speed_entry):
+        """moves robot back at specified speed"""
+        self.left_motor.run_forever(speed_sp=-left_speed_entry)
+        self.right_motor.run_forever(speed_sp=-right_speed_entry)
+
+    def right(self, right_speed_entry):
+        """moves robots right track forward at specified speed"""
+        self.right_motor.run_forever(speed_sp=right_speed_entry)
