@@ -28,6 +28,7 @@ class Snatch3r(object):
         self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
         self.touch_sensor = ev3.TouchSensor()
         self.color_sensor = ev3.ColorSensor()
+        self.ir_sensor = ev3.InfraredSensor()
 
 
         # Check that the motors are actually connected
@@ -36,6 +37,7 @@ class Snatch3r(object):
         assert self.arm_motor.connected
         assert self.touch_sensor
         assert self.color_sensor
+        assert self.ir_sensor
 
     def drive_inches(self, inch_target, speed):
         """drives robot forward or backward at a specified speed depending on

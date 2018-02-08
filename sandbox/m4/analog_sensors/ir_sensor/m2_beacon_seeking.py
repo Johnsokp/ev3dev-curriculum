@@ -9,8 +9,8 @@ function gets the robot to that location it will stop the robot and return.  Wit
 prompted if they want to find the beacon again (presumably you move it first) or quit.
 
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Group 24.
+"""  # done: 1. PUT YOUR NAME IN THE ABOVE LINE.
 import traceback
 
 import ev3dev.ev3 as ev3
@@ -60,14 +60,22 @@ def seek_beacon(robot):
 
     forward_speed = 300
     turn_speed = 100
+    # To find the IR beacon (with the remote in beacon mode)
+    beacon_seeker = ev3.BeaconSeeker()  # Assumes remote is set to channel 1
+    print("Heading", beacon_seeker.heading)
+    print("Distance", beacon_seeker.distance)
 
     while not robot.touch_sensor.is_pressed:
         # The touch sensor can be used to abort the attempt (sometimes handy during testing)
 
-        # TODO: 3. Use the beacon_seeker object to get the current heading and distance.
-        current_heading = 0  # use the beacon_seeker heading
-        current_distance = 0  # use the beacon_seeker distance
-        if current_distance == -128:
+        # done: 3. Use the beacon_seeker object to get the current heading and
+        # distance.
+        current_heading = beacon_seeker.heading  # use the beacon_seeker
+        # heading
+        current_distance = beacon_seeker.distance  # use the beacon_seeker distance
+
+        print(current_heading,current_distance)
+        """if current_distance == -128:
             # If the IR Remote is not found just sit idle for this program until it is moved.
             print("IR Remote not found. Distance is -128")
             robot.stop()
@@ -92,7 +100,18 @@ def seek_beacon(robot):
             if math.fabs(current_heading) < 2:
                 # Close enough of a heading to move forward
                 print("On the right heading. Distance: ", current_distance)
-                # You add more!
+                if current_distance == 0:
+                    robot.stop()
+                    return True
+                else:
+                    robot.forward(forward_speed, forward_speed)
+            elif math.fabs(current_heading) < 10:
+                if current_heading < 0:
+                    robot.forward(-turn_speed, turn_speed)
+                elif current_heading > 0:
+                    robot.forward(turn_speed, -turn_speed)
+            else:
+                print("Heading is too far off to fix: ", current_heading)"""
 
 
 
