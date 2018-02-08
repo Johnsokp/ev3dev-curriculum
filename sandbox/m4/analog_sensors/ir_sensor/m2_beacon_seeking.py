@@ -74,8 +74,7 @@ def seek_beacon(robot):
         # heading
         current_distance = beacon_seeker.distance  # use the beacon_seeker distance
 
-        print(current_heading,current_distance)
-        """if current_distance == -128:
+        if current_distance == -128:
             # If the IR Remote is not found just sit idle for this program until it is moved.
             print("IR Remote not found. Distance is -128")
             robot.stop()
@@ -100,7 +99,8 @@ def seek_beacon(robot):
             if math.fabs(current_heading) < 2:
                 # Close enough of a heading to move forward
                 print("On the right heading. Distance: ", current_distance)
-                if current_distance == 0:
+                if current_distance <= 1:
+                    robot.drive_inches(2, forward_speed)
                     robot.stop()
                     return True
                 else:
@@ -111,7 +111,7 @@ def seek_beacon(robot):
                 elif current_heading > 0:
                     robot.forward(turn_speed, -turn_speed)
             else:
-                print("Heading is too far off to fix: ", current_heading)"""
+                print("Heading is too far off to fix: ", current_heading)
 
 
 
