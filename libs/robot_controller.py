@@ -173,3 +173,53 @@ class Snatch3r(object):
     def right(self, right_speed_entry):
         """moves robots right track forward at specified speed"""
         self.right_motor.run_forever(speed_sp=right_speed_entry)
+
+    def seek_beacon(self):
+        """
+        Uses the IR Sensor in BeaconSeeker mode to find the beacon.  If the beacon is found this return True.
+        If the beacon is not found and the attempt is cancelled by hitting the touch sensor, return False.
+        """
+        forward_speed = 300
+        turn_speed = 100
+
+        # To find the IR beacon (with the remote in beacon mode)
+        beacon_seeker = ev3.BeaconSeeker()  # Assumes remote is set to channel 1
+        print("Heading", beacon_seeker.heading)
+        print("Distance", beacon_seeker.distance)
+
+        while not self.touch_sensor.is_pressed:
+            current_heading = beacon_seeker.heading  # use the beacon_seeker
+            # heading
+            current_distance = beacon_seeker.distance  # use the beacon_seeker distance
+
+            if current_distance == -128:
+                # If the IR Remote is not found just sit idle for this program until it is moved.
+                print("IR Remote not found. Distance is -128")
+                self.stop()
+            else:
+                if math.fabs(current_heading) < 2:
+                    # Close enough of a heading to move forward
+                    print("On the right heading. Distance: ", current_distance)
+                    if current_distance <= 1:
+                        self.stop()
+                        print(forward_speed)
+                        self.drive_inches(3, forward_speed)
+                        print('great')
+
+                        return True
+                    else:
+                        self.forward(forward_speed, forward_speed)
+                elif math.fabs(current_heading) < 10:
+                    if current_heading < 0:
+                        self.forward(-turn_speed, turn_speed)
+                    elif current_heading > 0:
+                        self.forward(turn_speed, -turn_speed)
+                else:
+                    print("Heading is too far off to fix: ", current_heading)
+
+            time.sleep(0.02)
+
+        # The touch_sensor was pressed to abort the attempt if this code runs.
+        print("Abandon ship!")
+        robot.stop()
+        return False

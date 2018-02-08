@@ -10,8 +10,8 @@ If the width reading is greater than 0 then you should make your robot beep.  If
 robot beeps thinking blue is present, but no blue is present) try setting the threshold higher than 0 (see what works
 for your environment). After a beep wait for at least 1 second to avoid lots of annoying beeps.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Group 24.
+"""  # done: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
 import time
