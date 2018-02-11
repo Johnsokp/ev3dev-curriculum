@@ -29,6 +29,7 @@ class Snatch3r(object):
         self.touch_sensor = ev3.TouchSensor()
         self.color_sensor = ev3.ColorSensor()
         self.ir_sensor = ev3.InfraredSensor()
+        self.pixy = ev3.Sensor(driver_name="pixy-lego")
 
 
         # Check that the motors are actually connected
@@ -38,6 +39,7 @@ class Snatch3r(object):
         assert self.touch_sensor
         assert self.color_sensor
         assert self.ir_sensor
+        assert self.pixy
 
     def drive_inches(self, inch_target, speed):
         """drives robot forward or backward at a specified speed depending on

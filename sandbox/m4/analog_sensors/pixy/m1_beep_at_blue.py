@@ -26,6 +26,7 @@ def main():
     ev3.Sound.speak("Beep at blue").wait()
     print("Press the touch sensor to exit this program.")
 
+
     robot = robo.Snatch3r()
     robot.pixy.mode = "SIG1"
 
@@ -36,6 +37,10 @@ def main():
         #   assert self.pixy
         # Then here you can use a command like width = robot.pixy.value(3)
 
+        print("(X, Y) = ({}, {})    Width = {} Height = {}".format(
+            robot.pixy.value(1), robot.pixy.value(2), robot.pixy.value(3),
+            robot.pixy.value(4)))
+        time.sleep(0.5)
 
 
         time.sleep(0.1)
