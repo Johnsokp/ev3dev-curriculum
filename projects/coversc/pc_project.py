@@ -48,7 +48,7 @@ def main():
     root.mainloop()
 
 def send_color_demand(mqtt_client, color_to_seek):
-    print('Seeking LED color = {}'.format(color_to_seek))
+    print('Seeking color = {}'.format(color_to_seek))
     mqtt_client.send_message("drive_to_color", [color_to_seek])
 
 def quit_program(mqtt_client, shutdown_ev3):
