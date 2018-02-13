@@ -16,7 +16,8 @@ If the user presses the Right button, the robot drives until the robot gets to W
 Authors: David Fisher and Group 24.
 """  # Done: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
-import ev3dev.ev3 as ev3
+import ev3dev.ev3 as ev3ls
+
 import time
 
 import robot_controller as robo

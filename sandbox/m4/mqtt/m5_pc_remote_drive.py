@@ -36,6 +36,7 @@ def main():
     # a MyDelegate class.  Simply construct the MqttClient with no parameter in the constructor (easy).
     #mqtt_client = None  # Delete this line, it was added temporarily so
     # that the code we gave you had no errors.
+    #pc_delegate = MyDelegateOnThePc()
     mqtt_client = com.MqttClient()
     mqtt_client.connect_to_ev3()
 
