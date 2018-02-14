@@ -28,6 +28,7 @@ import mqtt_remote_method_calls as com
 import tkinter
 from tkinter import ttk
 
+
 def main():
     robot = robo.Snatch3r()
 
@@ -36,53 +37,48 @@ def main():
 
     root = tkinter.Tk()
 
-    btn = robot.Button()
-
     left_speed_entry = 500
     right_speed_entry = 500
 
+    num_list = []
     trigger = False
+    mqtt_client.send_message("mud", mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BROWN, num_list)
 
     while robot.running:
-        btn.process()
-        if trigger == False:
+        if not trigger:
             root.title("Score a touchdown")
             main_frame = ttk.Frame(root, padding=20, relief='raised')
             main_frame.grid()
 
-
-
             forward_button = ttk.Button(main_frame, text="Forward")
-            forward_button.grid(row=2, column=1)
+            forward_button.grid(row=2, column=0)
             # forward_button and '<Up>' key is done for your here...
-            forward_button['command'] = lambda: robot.forward(left_speed_entry, right_speed_entry)
-            root.bind('<Up>', lambda event: robot.forward(left_speed_entry, right_speed_entry))
+            forward_button['command'] = lambda: drive_forward(mqtt_client, left_speed_entry, right_speed_entry)
+            root.bind('<Up>', lambda event: drive_forward(mqtt_client, left_speed_entry, right_speed_entry))
 
-            left_button = ttk.Button(main_frame, text="Left")
+            left_button = ttk.Button(main_frame, text="Turn Left")
             left_button.grid(row=3, column=0)
             # left_button and '<Left>' key
-            left_button['command'] = lambda: robot.left(left_speed_entry)
-            root.bind('<Left>', lambda event: robot.left(left_speed_entry))
+            left_button['command'] = lambda: turn_left(mqtt_client, left_speed_entry)
+            root.bind('<Left>', lambda event: turn_left(mqtt_client, left_speed_entry))
+
+            right_button = ttk.Button(main_frame, text="Turn Right")
+            right_button.grid(row=3, column=2)
+            # right_button and '<Right>' key
+            right_button['command'] = lambda: turn_right(mqtt_client, right_speed_entry)
+            root.bind('<Right>', lambda event: turn_right(mqtt_client, right_speed_entry))
+
+            back_button = ttk.Button(main_frame, text="Back")
+            back_button.grid(row=4, column=1)
+            # back_button and '<Down>' key
+            back_button['command'] = lambda: drive_back(mqtt_client, left_speed_entry, right_speed_entry)
+            root.bind('<Down>', lambda event: drive_back(mqtt_client, left_speed_entry, right_speed_entry))
 
             stop_button = ttk.Button(main_frame, text="Stop")
             stop_button.grid(row=3, column=1)
             # stop_button and '<space>' key (note, does not need left_speed_entry, right_speed_entry)
             stop_button['command'] = lambda: robot.stop()
             root.bind('<space>', lambda event: robot.stop())
-
-            right_button = ttk.Button(main_frame, text="Right")
-            right_button.grid(row=3, column=2)
-            # right_button and '<Right>' key
-            right_button['command'] = lambda: robot.right(left_speed_entry)
-            root.bind('<Right>', lambda event: robot.right(left_speed_entry))
-
-            back_button = ttk.Button(main_frame, text="Back")
-            back_button.grid(row=4, column=1)
-            # back_button and '<Down>' key
-            back_button['command'] = lambda: robot.back(left_speed_entry,
-                                                        right_speed_entry)
-            root.bind('<Down>', lambda event: robot.back(left_speed_entry,
-                                                    right_speed_entry))
 
             up_button = ttk.Button(main_frame, text="Up")
             up_button.grid(row=5, column=0)
@@ -109,27 +105,68 @@ def main():
             main_frame = ttk.Frame(root, padding=20, relief='raised')
             main_frame.grid()
 
-            left_speed_label = ttk.Label(main_frame, text="Left")
-            left_speed_label.grid(row=0, column=0)
-            left_speed_entry = ttk.Entry(main_frame, width=8)
-            left_speed_entry.insert(0, "600")
-            left_speed_entry.grid(row=1, column=0)
+            dodge_label = ttk.Label(main_frame, text="Dodge Left or Right")
+            dodge_label.grid(row=0, column=0)
+            dodge_entry = ttk.Entry(main_frame, width=8)
+            dodge_entry.insert(0, "")
+            dodge_entry.grid(row=1, column=0)
 
-            right_speed_label = ttk.Label(main_frame, text="Right")
-            right_speed_label.grid(row=0, column=2)
-            right_speed_entry = ttk.Entry(main_frame, width=8, justify=tkinter.RIGHT)
-            right_speed_entry.insert(0, "600")
-            right_speed_entry.grid(row=1, column=2)
+# ----------------------------------------------------------------------
+# Tkinter callbacks
+# ----------------------------------------------------------------------
 
-def play_wav_file():
+def drive_forward(mqtt_client, left_speed_entry, right_speed_entry):
+
+    print("forward")
+    mqtt_client.send_message("forward", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+
+
+def turn_right(mqtt_client, left_speed_entry):
+    print("left")
+    mqtt_client.send_message("left", [int(left_speed_entry.get())])
+
+
+def stop(mqtt_client):
+    print("stop")
+    mqtt_client.send_message("stop")
+
+
+def turn_left(mqtt_client, right_speed_entry):
+    print("right")
+    mqtt_client.send_message("right", [int(right_speed_entry.get())])
+
+
+def drive_back(mqtt_client, left_speed_entry, right_speed_entry):
+    print("back")
+    mqtt_client.send_message("back", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+
+
+# Quit and Exit button callbacks
+def quit_program(mqtt_client, shutdown_ev3):
+    if shutdown_ev3:
+        print("shutdown")
+        mqtt_client.send_message("shutdown")
+    mqtt_client.close()
+    exit()
+
+
+# ----------------------------------------------------------------------
+# Custom callbacks
+# ----------------------------------------------------------------------
+
+def touchdown(mqtt_client, robot):
+    robot.running = False
+    mqtt_client.send_message("drive_inches", int(3), int(600))
+
+
+# def play_wav_file():
     # File from
     # Had to convert it to a PCM signed 16-bit little-endian .wav file
     # http://audio.online-convert.com/convert-to-wav
-    #ev3.Sound.play("/home/robot/csse120/projects/declermr/_____________.wav")
+    # ev3.Sound.play("/home/robot/csse120/projects/declermr/_____________.wav")
 
 # ----------------------------------------------------------------------
 # Calls  main  to start the ball rolling.
 # ----------------------------------------------------------------------
+
 main()
-
-
