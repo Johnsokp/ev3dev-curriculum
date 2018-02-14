@@ -24,7 +24,23 @@ class DataContainer(object):
             self.rrr.forward(100, 100)
             print(self.rrr.color_sensor.color)
         print('stop')
-        self.rrr.stop()
+        #self.rrr.stop()
+        #self.rrr.turn_degrees(-90, 200)
+        #self.rrr.drive_inches(12, 400)
+        #self.rrr.stop()
+
+        if color_number == 2:
+            self.rrr.turn_degrees(-90, 200)
+            self.rrr.drive_inches(24, 600)
+            self.rrr.arm_up()
+            self.rrr.arm_down()
+        elif color_number == 3:
+            self.rrr.turn_degrees(90, 600)
+            self.rrr.drive_inches(36, 900)
+            ev3.Sound.speak("We're learning today").wait()
+        elif color_number == 5:
+            self.rrr.seek_beacon()
+
 
 def main():
     robot = robo.Snatch3r()

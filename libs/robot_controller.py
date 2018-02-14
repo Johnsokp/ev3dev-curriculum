@@ -223,5 +223,5 @@ class Snatch3r(object):
 
         # The touch_sensor was pressed to abort the attempt if this code runs.
         print("Abandon ship!")
-        robot.stop()
+        self.stop()
         return False
