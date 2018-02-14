@@ -10,16 +10,16 @@ class DataContainer(object):
         self.running = True
 
     def drive_to_color(self, color_to_seek):
-        print("Received: {} {}".format(color_to_seek))
+        print("Received: {}".format(color_to_seek))
 
-        while robot.color_sensor.color != color_to_seek:
-            robot.forward(100, 100)
-            print(robot.color_sensor.color)
-        robot.stop()
+        while robo.color_sensor.color != color_to_seek:
+            self.forward(100, 100)
+            print(self.color_sensor.color)
+        self.stop()
 
 def main():
     robot = robo.Snatch3r()
-    dc = DataContainer()
+    dc = DataContainer(robot)
 
     ev3_delegate = DataContainer()
     mqtt_client = com.MqttClient(ev3_delegate)
@@ -30,9 +30,6 @@ def main():
     print("--------------------------------------------")
     ev3.Sound.speak("Let's run errands").wait()
 
-    while dc.running:
-        btn.process()
-        time.sleep(0.01)
-
+    robot.loop_forever()
 
 main()
