@@ -55,7 +55,7 @@ def main():
 
     # Buttons on EV3 (these obviously assume TO DO: 3. is done)
     btn = robo.ev3.Button()
-    btn.on_backspace = lambda state: handle_shutdown(state, robot)
+    btn.on_backspace = robot.shutdown()
     """
     Stretch goal: implement button functions for celebration
     """
@@ -68,17 +68,6 @@ def main():
         btn.process()
         review_touchdown(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BLUE)
 
-    robo.ev3.Sound.speak("Goodbye").wait()
-
-# ----------------------------------------------------------------------
-# Button event callback functions
-# ----------------------------------------------------------------------
-
-
-def handle_shutdown(button_state, robot):
-    """Exit the program."""
-    if button_state:
-        robot.running = False
 
 # ----------------------------------------------------------------------
 # Sense the color.
