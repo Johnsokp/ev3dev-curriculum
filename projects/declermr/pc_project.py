@@ -28,6 +28,8 @@ import mqtt_remote_method_calls as com
 import tkinter
 from tkinter import ttk
 
+import random
+
 
 def main():
     robot = robo.Snatch3r()
@@ -35,10 +37,10 @@ def main():
     mqtt_client = com.MqttClient()
     mqtt_client.connect_to_ev3()
 
-    root = tkinter.Tk()
-
     left_speed_number = 500
     right_speed_number = 500
+
+    robot.arm_calibration()
 
     num_list = []
     trigger = False
@@ -46,7 +48,9 @@ def main():
 
     while robot.running:
         if not trigger:
+            root = tkinter.Tk()
             root.title("Score a touchdown")
+
             main_frame = ttk.Frame(root, padding=20, relief='raised')
             main_frame.grid()
 
@@ -99,15 +103,17 @@ def main():
             # Buttons for quit and exit
             q_button = ttk.Button(main_frame, text="Quit")
             q_button.grid(row=5, column=2)
-            q_button['command'] = (lambda: robot.stop())
+            q_button['command'] = lambda: robot.stop()
 
             e_button = ttk.Button(main_frame, text="Exit")
             e_button.grid(row=6, column=2)
-            e_button['command'] = (lambda: robot.shutdown())
+            e_button['command'] = lambda: robot.shutdown()
 
             root.mainloop()
         else:
+            root = tkinter.Tk()
             root.title("TACKLE INCOMING!!!")
+
             main_frame = ttk.Frame(root, padding=20, relief='raised')
             main_frame.grid()
 
@@ -116,6 +122,7 @@ def main():
             dodge_entry = ttk.Entry(main_frame, width=8)
             dodge_entry.insert(0, "")
             dodge_entry.grid(row=1, column=0)
+            dodge_entry['command'] = lambda: dodge(robot, dodge_entry, trigger)
 
 # ----------------------------------------------------------------------
 # Tkinter callbacks
@@ -164,6 +171,21 @@ def quit_program(mqtt_client, shutdown_ev3):
 def touchdown(mqtt_client, robot):
     robot.running = False
     mqtt_client.send_message("drive_inches", int(3), int(600))
+
+
+def dodge(robot, dodge_entry, trigger):
+    random_num = random.randrange(1, 2)
+    if random_num == 1:
+        dodge_direction = "left"
+    else:
+        dodge_direction = "right"
+
+    if dodge_direction == dodge_entry:
+        trigger = True
+    else:
+        robot.running = False
+
+    return trigger, robot.running
 
 
 # def play_wav_file():

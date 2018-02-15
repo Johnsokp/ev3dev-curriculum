@@ -46,7 +46,7 @@ import random
 def main():
     robot = robo.Snatch3r
 
-    robo.ev3.Sound.speak("Get ready for some football").wait()
+    robo.ev3.Sound.speak("test test").wait()
 
     # canvas = 'Ev3_Led button'
     robot = robo.Snatch3r()
@@ -55,7 +55,7 @@ def main():
 
     # Buttons on EV3 (these obviously assume TO DO: 3. is done)
     btn = robo.ev3.Button()
-    btn.on_backspace = robot.shutdown()
+    # btn.on_backspace = robot.shutdown()
     """
     Stretch goal: implement button functions for celebration
     """
@@ -66,7 +66,9 @@ def main():
 
     while robot.running:
         btn.process()
+        print(1)
         review_touchdown(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BLUE)
+        print(2)
 
 
 # ----------------------------------------------------------------------
