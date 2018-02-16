@@ -34,8 +34,7 @@ def main():
 
     go_home_button = ttk.Button(main_frame, text="Go home")
     go_home_button.grid(row=2, column=0)
-    go_home_button['command'] = lambda: send_color_demand(
-    mqtt_client, 'red')
+    go_home_button['command'] = lambda: go_home_demand(mqtt_client)
 
     q_button = ttk.Button(main_frame, text="Quit")
     q_button.grid(row=2, column=2)
@@ -45,11 +44,29 @@ def main():
     mqtt_client = com.MqttClient(pc_delegate)
     mqtt_client.connect_to_ev3()
 
+    #for the scale
+    int_var = tkinter.IntVar()
+    scale = ttk.Scale(main_frame, from_=0, to=900, variable = int_var)
+    scale.set(450)
+    scale.grid(row =5, column = 1)
+
+    button = ttk.Button(main_frame, text="Set the Speed",
+                        command= lambda: send_value(mqtt_client, int_var))
+    button.grid(row = 7, column = 1)
+
     root.mainloop()
 
 def send_color_demand(mqtt_client, color_to_seek):
     print('Seeking color = {}'.format(color_to_seek))
     mqtt_client.send_message("drive_to_color", [color_to_seek])
+
+def go_home_demand(mqtt_client):
+    print('Going home')
+    mqtt_client.send_message("go_home", [])
+
+def send_value(mqtt_client, int_var):
+    print('variable', int_var.get())
+    mqtt_client.send_message("set_speed", [int_var.get()])
 
 def quit_program(mqtt_client, shutdown_ev3):
     if shutdown_ev3:
