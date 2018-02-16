@@ -13,30 +13,48 @@ class DataContainer(object):
 
     def drive_to_color(self, color_to_seek):
 
-        while not self.rrr.touch_sensor.is_pressed:
-            #time.sleep(0.1)
+        print("Received: {}".format(color_to_seek))
 
-            print("Received: {}".format(color_to_seek))
+        if color_to_seek == 'blue':
+            color_number = 2
+        elif color_to_seek == 'green':
+            color_number = 3
+        elif color_to_seek == 'red':
+            color_number = 5
 
-            if color_to_seek == 'blue':
-                color_number = 2
-            elif color_to_seek == 'green':
-                color_number = 3
+        while True:
+            if self.rrr.touch_sensor.is_pressed:
+                self.rrr.stop()
+                return
+            if color_to_seek == color_number:
+                break
 
-            while self.rrr.color_sensor.color != color_number:
-                self.rrr.forward(100, 100)
-                print(self.rrr.color_sensor.color)
-            print('stop')
+        while self.rrr.color_sensor.color != color_number:
+            self.rrr.forward(100, 100)
+            print(self.rrr.color_sensor.color)
+        print('stop')
 
-            if color_number == 2:
-                self.rrr.turn_degrees(-90, self.speed)
-                self.rrr.drive_inches(24, self.speed)
-                self.rrr.arm_up()
-                self.rrr.arm_down()
-            elif color_number == 3:
-                self.rrr.turn_degrees(90, self.speed)
-                self.rrr.drive_inches(36, self.speed)
-                ev3.Sound.speak("We're learning today").wait()
+        if color_number == 2:
+            self.rrr.turn_degrees(-90, self.speed)
+            self.rrr.drive_inches(24, self.speed)
+            self.rrr.arm_up()
+            self.rrr.arm_down()
+            # added code
+            self.rrr.turn_degrees(90, self.speed)
+            self.rrr.drive_inches(24, self.speed)
+            self.rrr.seek_beacon()
+        elif color_number == 3:
+            self.rrr.turn_degrees(90, self.speed)
+            self.rrr.drive_inches(36, self.speed)
+            ev3.Sound.speak("We're learning today").wait()
+            #added code
+            self.rrr.turn_degrees(90, self.speed)
+            self.rrr.drive_inches(36, self.speed)
+            self.rrr.seek_beacon()
+        elif color_number == 5:
+            self.rrr.turn_degrees(90, self.speed)
+            self.rrr.drive_inches(20,  self.speed)
+            self.rrr.turn_degrees(180, self.speed)
 
         def go_home(self):
             self.rrr.seek_beacon()

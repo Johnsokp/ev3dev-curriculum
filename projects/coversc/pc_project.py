@@ -34,7 +34,7 @@ def main():
 
     go_home_button = ttk.Button(main_frame, text="Go home")
     go_home_button.grid(row=2, column=0)
-    go_home_button['command'] = lambda: go_home_demand(mqtt_client)
+    go_home_button['command'] = lambda: send_color_demand(mqtt_client, 'red')
 
     q_button = ttk.Button(main_frame, text="Quit")
     q_button.grid(row=2, column=2)
