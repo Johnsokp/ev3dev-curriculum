@@ -13,49 +13,32 @@ import robot_controller as robo
 import random
 
 
-# class MyDelegate(object):
-#
-#     def __init__(self):
-#         self.running = True
-#
-#     def set_led(self, led_side_string, led_color_string):
-#         print("Received: {} {}".format(led_side_string, led_color_string))
-#         led_side = None
-#         if led_side_string == "left":
-#             led_side = ev3.Leds.LEFT
-#         elif led_side_string == "right":
-#             led_side = ev3.Leds.RIGHT
-#
-#         led_color = None
-#         if led_color_string == "green":
-#             led_color = ev3.Leds.GREEN
-#         elif led_color_string == "red":
-#             led_color = ev3.Leds.RED
-#         elif led_color_string == "black":
-#             led_color = ev3.Leds.BLACK
-#
-#         if led_side is None or led_color is None:
-#             print("Invalid parameters sent to set_led. led_side_string = {} led_color_string = {}".format(
-#                 led_side_string, led_color_string))
-#         else:
-#             ev3.Leds.set_color(led_side, led_color)
-#
-#
+# Potential values of the color_sensor.color property
+#   ev3.ColorSensor.COLOR_NOCOLOR is the value 0
+#   ev3.ColorSensor.COLOR_BLACK   is the value 1
+#   ev3.ColorSensor.COLOR_BLUE    is the value 2
+#   ev3.ColorSensor.COLOR_GREEN   is the value 3
+#   ev3.ColorSensor.COLOR_YELLOW  is the value 4
+#   ev3.ColorSensor.COLOR_RED     is the value 5
+#   ev3.ColorSensor.COLOR_WHITE   is the value 6
+#   ev3.ColorSensor.COLOR_BROWN   is the value 7
+COLOR_NAMES = ["None", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brown"]
 
 
 def main():
-    robot = robo.Snatch3r
-
     robo.ev3.Sound.speak("test test").wait()
 
-    # canvas = 'Ev3_Led button'
     robot = robo.Snatch3r()
-    mqtt_client = com.MqttClient()
+    mqtt_client = com.MqttClient(robot)
     mqtt_client.connect_to_pc()
 
-    # Buttons on EV3 (these obviously assume TO DO: 3. is done)
+    robot.arm_calibration()
+
     btn = robo.ev3.Button()
-    # btn.on_backspace = robot.shutdown()
+    btn.on_backspace = lambda state: handle_shutdown(state, robot)
+
+    num_list = []
+
     """
     Stretch goal: implement button functions for celebration
     """
@@ -66,9 +49,8 @@ def main():
 
     while robot.running:
         btn.process()
-        print(1)
         review_touchdown(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BLUE)
-        print(2)
+        mud(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BROWN, num_list)
 
 
 # ----------------------------------------------------------------------
@@ -78,19 +60,25 @@ def main():
 
 def mud(mqtt_client, robot, color_to_seek, num_list):
     random_num = random.randrange(1, 100)
-    num_list.append(random_num)
-    while robot.color_sensor.color != color_to_seek:
+    if robot.color_sensor.color == color_to_seek:
+        num_list.append(random_num)
         for k in range(len(num_list)):
             if num_list[k] == random_num:
                 robot.stop()
-                mqtt_client.send_message("Trigger", str(True))
+                mqtt_client.send_message("Trigger", [str(True)])
                 num_list = []
+        robo.time.sleep(.5)
 
 
 def review_touchdown(mqtt_client, robot, color_to_seek):
-    while robot.color_sensor.color != color_to_seek:
-        robot.loop_forever()
-    mqtt_client.send_message("touchdown", mqtt_client, robot)
+    if robot.color_sensor.color == color_to_seek:
+        mqtt_client.send_message("touchdown", [mqtt_client, robot])
+
+
+def handle_shutdown(button_state, robot):
+    """Exit the program."""
+    if button_state:
+        robot.shutdown()
 
 
 # ---------------------------------------------------------------------
