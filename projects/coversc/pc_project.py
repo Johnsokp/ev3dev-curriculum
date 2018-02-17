@@ -11,6 +11,9 @@ class DataContainer(object):
     def __init__(self, label_to_display_messages_in):
         self.running = True
 
+    def message(self, message_from_ev3):
+        print(message_from_ev3)
+
 def main():
 
     root = tkinter.Tk()
@@ -43,6 +46,8 @@ def main():
     pc_delegate = DataContainer(button_message)
     mqtt_client = com.MqttClient(pc_delegate)
     mqtt_client.connect_to_ev3()
+
+
 
     #for the scale
     int_var = tkinter.IntVar()

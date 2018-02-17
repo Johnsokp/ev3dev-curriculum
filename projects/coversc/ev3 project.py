@@ -4,7 +4,7 @@ import mqtt_remote_method_calls as com
 import ev3dev.ev3 as ev3
 import time
 
-class DataContainer(object):
+class EV3(object):
 
     def __init__(self, r):
         self.running = True
@@ -18,7 +18,7 @@ class DataContainer(object):
         if color_to_seek == 'blue':
             color_number = 2
         elif color_to_seek == 'green':
-            color_number = 3
+            color_number = 6
         elif color_to_seek == 'red':
             color_number = 5
 
@@ -33,13 +33,15 @@ class DataContainer(object):
             self.rrr.drive_inches(18, self.speed)
             self.rrr.arm_up()
             self.rrr.arm_down()
+            self.rrr.drive_inches(-10, self.speed)
             # added code
-            self.rrr.turn_degrees(180, self.speed)
-            self.rrr.drive_inches(18, self.speed)
+            self.rrr.turn_degrees(176, self.speed)
+            self.rrr.drive_inches(8, self.speed)
             self.rrr.turn_degrees(90, self.speed)
             self.rrr.seek_beacon()
-            self.rrr.drive_inches(-5, self.speed)
+            self.rrr.drive_inches(-12, self.speed)
             self.rrr.turn_degrees(180, self.speed)
+            self.mqtt_client.send_message("message",['Where next?'])
         elif color_number == 3:
             self.rrr.turn_degrees(90, self.speed)
             self.rrr.drive_inches(24, self.speed)
@@ -51,11 +53,13 @@ class DataContainer(object):
             self.rrr.seek_beacon()
             self.rrr.drive_inches(-5, self.speed)
             self.rrr.turn_degrees(180, self.speed)
+            self.mqtt_client.send_message("message",['Where next?'])
         elif color_number == 5:
             self.rrr.turn_degrees(90, self.speed)
             self.rrr.drive_inches(20,  self.speed)
             self.rrr.turn_degrees(430, self.speed)
             ev3.Sound.speak('Home for the night!').wait()
+            self.mqtt_client.send_message("message",['Home Sweet Home'])
 
     def go_home(self):
         self.rrr.seek_beacon()
@@ -65,10 +69,19 @@ class DataContainer(object):
 
 def main():
     robot = robo.Snatch3r()
-    dc = DataContainer(robot)
+    #dc = EV3(robot)
 
-    mqtt_client = com.MqttClient(dc)
+    #new code
+    #my_delegate = dc
+
+    #mqtt_client = com.MqttClient(dc)
+    #mqtt_client.connect_to_pc()
+
+    my_delegate = EV3(robot)
+    mqtt_client = com.MqttClient(my_delegate)
+    my_delegate.mqtt_client = mqtt_client
     mqtt_client.connect_to_pc()
+
 
     print("--------------------------------------------")
     print("Let's run errands")
@@ -76,5 +89,7 @@ def main():
     ev3.Sound.speak("Let's run errands").wait()
 
     robot.loop_forever()
+
+    #robot.loop_forever()
 
 main()
