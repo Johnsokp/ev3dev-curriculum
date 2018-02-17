@@ -42,11 +42,10 @@ class EV3(object):
             self.rrr.drive_inches(-12, self.speed)
             self.rrr.turn_degrees(180, self.speed)
             self.mqtt_client.send_message("message",['Where next?'])
-        elif color_number == 3:
+        elif color_number == 6:
             self.rrr.turn_degrees(90, self.speed)
             self.rrr.drive_inches(24, self.speed)
             ev3.Sound.speak("We're learning today").wait()
-            #added code
             self.rrr.turn_degrees(180, self.speed)
             self.rrr.drive_inches(24, self.speed)
             self.rrr.turn_degrees(-90, self.speed)
