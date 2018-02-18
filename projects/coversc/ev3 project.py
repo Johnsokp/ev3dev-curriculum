@@ -68,13 +68,6 @@ class EV3(object):
 
 def main():
     robot = robo.Snatch3r()
-    #dc = EV3(robot)
-
-    #new code
-    #my_delegate = dc
-
-    #mqtt_client = com.MqttClient(dc)
-    #mqtt_client.connect_to_pc()
 
     my_delegate = EV3(robot)
     mqtt_client = com.MqttClient(my_delegate)
@@ -88,7 +81,5 @@ def main():
     ev3.Sound.speak("Let's run errands").wait()
 
     robot.loop_forever()
-
-    #robot.loop_forever()
 
 main()

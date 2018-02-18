@@ -47,8 +47,6 @@ def main():
     mqtt_client = com.MqttClient(pc_delegate)
     mqtt_client.connect_to_ev3()
 
-
-
     #for the scale
     int_var = tkinter.IntVar()
     scale = ttk.Scale(main_frame, from_=0, to=900, variable = int_var)
