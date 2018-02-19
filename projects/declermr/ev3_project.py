@@ -32,7 +32,7 @@ def main():
     mqtt_client = com.MqttClient(robot)
     mqtt_client.connect_to_pc()
 
-    robot.arm_calibration()
+    # robot.arm_calibration()
 
     btn = robo.ev3.Button()
     btn.on_backspace = lambda state: handle_shutdown(state, robot)
@@ -59,20 +59,32 @@ def main():
 
 
 def mud(mqtt_client, robot, color_to_seek, num_list):
-    random_num = random.randrange(1, 100)
+    random_num = random.randrange(1, 2)
     if robot.color_sensor.color == color_to_seek:
         num_list.append(random_num)
-        for k in range(len(num_list)):
+        robo.time.sleep(.01)
+        for k in range(len(num_list) - 1):
+            print(num_list[k], random_num)
             if num_list[k] == random_num:
                 robot.stop()
-                mqtt_client.send_message("Trigger", [str(True)])
-                num_list = []
-        robo.time.sleep(.5)
+                mqtt_client.send_message("triggered", [True])
+                robo.time.sleep(5)
+                break
+    print(num_list)
+    robo.time.sleep(.5)
 
 
 def review_touchdown(mqtt_client, robot, color_to_seek):
+    print(7)
+    robo.time.sleep(.5)
     if robot.color_sensor.color == color_to_seek:
-        mqtt_client.send_message("touchdown", [mqtt_client, robot])
+        print(8)
+        mqtt_client.send_message("touchdown")
+        print(9)
+        robo.ev3.Sound.speak("Touchdown for Jersey Number 3").wait()
+        print(10)
+        robot.drive_inches(3, 600)
+        robot.shutdown()
 
 
 def handle_shutdown(button_state, robot):

@@ -28,32 +28,142 @@ from tkinter import ttk
 
 import random
 
+import time
+
 
 class WindowDelegate(object):
     def __init__(self):
-        self.old_window = tkinter.Tk()
-        self.new_window = tkinter.Toplevel()
         self.left_speed_number = 500
         self.right_speed_number = 500
         self.trigger = False
         self.running = True
+        self.flip = 0
+        self.root = tkinter.Tk()
 
-    def next_window(self):
-        if self.trigger:
-            self.old_window.destroy()
+    def triggered(self, trigger_switch):
+        self.flip = 1
+        self.trigger = trigger_switch
+
+    def touchdown(self):
+        self.root.destroy()
 
 
 def main():
-    mqtt_client = com.MqttClient()
-    mqtt_client.connect_to_ev3()
-
     window = WindowDelegate()
 
-    root = tkinter.Tk()
+    mqtt_client = com.MqttClient(window)
+    mqtt_client.connect_to_ev3()
 
-    master_gui(mqtt_client, root, window)
+    main_root = window.root
+    secondary_root = tkinter.Toplevel()
+    tertiary_root = tkinter.Toplevel()
+    main_root.after(500, lambda: master_gui(main_root, secondary_root, tertiary_root, window))
+    window1(mqtt_client, secondary_root, window)
+    window2(tertiary_root, window)
+    main_root.withdraw()
+    tertiary_root.iconify()
 
-    root.mainloop()
+    main_root.mainloop()
+
+# ----------------------------------------------------------------------
+# Windows
+# ----------------------------------------------------------------------
+
+
+def master_gui(root, secondary_root, tertiary_root, window):
+    if window.flip == 1:
+        if not window.trigger:
+            print(1)
+            tertiary_root.iconify()
+            secondary_root.deiconify()
+            window.flip = 0
+        else:
+            print(2)
+            secondary_root.iconify()
+            tertiary_root.deiconify()
+            print(3)
+            window.flip = 0
+    print(0)
+    root.after(500, lambda: master_gui(root, secondary_root, tertiary_root, window))
+
+
+def window1(mqtt_client, secondary_root, window):
+    secondary_root.title("Score a touchdown")
+
+    running_frame = ttk.Frame(secondary_root, padding=20, relief='raised')
+    running_frame.grid()
+
+    picture = tkinter.PhotoImage(file='runningback_image.gif')
+    not_a_button = ttk.Button(running_frame, image=picture)
+    not_a_button.image = picture
+    not_a_button.grid(row=1, column=2)
+    not_a_button['command'] = lambda: print('Eyes on the ball rookie!')
+
+    forward_button = ttk.Button(running_frame, text="Forward")
+    forward_button.grid(row=2, column=2)
+    # forward_button and '<Up>' key is done for your here...
+    forward_button['command'] = lambda: drive_forward(mqtt_client, window.left_speed_number, window.right_speed_number)
+    secondary_root.bind('<Up>',
+                        lambda event: drive_forward(mqtt_client, window.left_speed_number, window.right_speed_number))
+
+    left_button = ttk.Button(running_frame, text="Turn Left")
+    left_button.grid(row=3, column=1)
+    # left_button and '<Left>' key
+    left_button['command'] = lambda: turn_left(mqtt_client, window.right_speed_number, window.left_speed_number)
+    secondary_root.bind('<Left>',
+                        lambda event: turn_left(mqtt_client, window.right_speed_number, window.left_speed_number))
+
+    right_button = ttk.Button(running_frame, text="Turn Right")
+    right_button.grid(row=3, column=3)
+    # right_button and '<Right>' key
+    right_button['command'] = lambda: turn_right(mqtt_client, window.right_speed_number, window.left_speed_number)
+    secondary_root.bind('<Right>',
+                        lambda event: turn_right(mqtt_client, window.right_speed_number, window.left_speed_number))
+
+    back_button = ttk.Button(running_frame, text="Back")
+    back_button.grid(row=4, column=2)
+    # back_button and '<Down>' key
+    back_button['command'] = lambda: drive_back(mqtt_client, window.left_speed_number, window.right_speed_number)
+    secondary_root.bind('<Down>',
+                        lambda event: drive_back(mqtt_client, window.left_speed_number, window.right_speed_number))
+
+    stop_button = ttk.Button(running_frame, text="Stop")
+    stop_button.grid(row=3, column=2)
+    # stop_button and '<space>' key (note, does not need left_speed_entry, right_speed_entry)
+    stop_button['command'] = lambda: stop(mqtt_client)
+    secondary_root.bind('<space>', lambda event: stop(mqtt_client))
+
+    q_button = ttk.Button(running_frame, text="Fumble, Lose Possession")
+    q_button.grid(row=5, column=0)
+    q_button['command'] = (lambda: quit_program(mqtt_client, False))
+
+    e_button = ttk.Button(running_frame, text="Out with an Injury")
+    e_button.grid(row=5, column=4)
+    e_button['command'] = (lambda: quit_program(mqtt_client, True))
+
+
+def window2(root, window):
+    root.title("TACKLE INCOMING!!!")
+
+    dodge_frame = ttk.Frame(root, padding=20, relief='raised')
+    dodge_frame.grid()
+
+    pic = tkinter.PhotoImage(file='tackle_image.gif')
+    also_not_a_button = ttk.Button(dodge_frame, image=pic)
+    also_not_a_button.image = pic
+    also_not_a_button.grid(row=0, column=0)
+    also_not_a_button['command'] = lambda: print('Stop standing there and shake him off!')
+
+    dodge_label = ttk.Label(dodge_frame, text="Dodge Left or Right")
+    dodge_label.grid(row=1, column=0)
+
+    dodge_entry = ttk.Entry(dodge_frame, width=8)
+    dodge_entry.grid(row=2, column=0)
+
+    dodge_button = ttk.Button(dodge_frame, text="Dodge")
+    dodge_button.grid(row=3, column=0)
+    dodge_button['command'] = lambda: dodge(dodge_entry.get(), window)
+    root.bind('<Return>', lambda event:  dodge(dodge_entry.get(), window))
 
 
 # ----------------------------------------------------------------------
@@ -92,116 +202,32 @@ def quit_program(mqtt_client, shutdown_ev3):
 
 
 # ----------------------------------------------------------------------
-# Windows
-# ----------------------------------------------------------------------
-
-def master_gui(mqtt_client, root, window):
-    if not window.trigger:
-        window1(mqtt_client, root, window)
-    else:
-        window2(root, window)
-
-
-def window1(mqtt_client, root, window):
-    root.title("Score a touchdown")
-
-    running_frame = ttk.Frame(root, padding=20, relief='raised')
-    running_frame.grid()
-
-    # picture = tkinter.PhotoImage(file='runningback_image.gif')
-    # not_a_button = ttk.Button(running_frame, image=picture)
-    # not_a_button.image = picture
-    # not_a_button.grid(row=1, column=0)
-    # not_a_button['command'] = lambda: print('Eyes on the ball rookie!')
-
-    forward_button = ttk.Button(running_frame, text="Forward")
-    forward_button.grid(row=2, column=2)
-    # forward_button and '<Up>' key is done for your here...
-    forward_button['command'] = lambda: drive_forward(mqtt_client, window.left_speed_number, window.right_speed_number)
-    root.bind('<Up>', lambda event: drive_forward(mqtt_client, window.left_speed_number, window.right_speed_number))
-
-    left_button = ttk.Button(running_frame, text="Turn Left")
-    left_button.grid(row=3, column=1)
-    # left_button and '<Left>' key
-    left_button['command'] = lambda: turn_left(mqtt_client, window.right_speed_number, window.left_speed_number)
-    root.bind('<Left>', lambda event: turn_left(mqtt_client, window.right_speed_number, window.left_speed_number))
-
-    right_button = ttk.Button(running_frame, text="Turn Right")
-    right_button.grid(row=3, column=3)
-    # right_button and '<Right>' key
-    right_button['command'] = lambda: turn_right(mqtt_client, window.right_speed_number, window.left_speed_number)
-    root.bind('<Right>', lambda event: turn_right(mqtt_client, window.right_speed_number, window.left_speed_number))
-
-    back_button = ttk.Button(running_frame, text="Back")
-    back_button.grid(row=4, column=2)
-    # back_button and '<Down>' key
-    back_button['command'] = lambda: drive_back(mqtt_client, window.left_speed_number, window.right_speed_number)
-    root.bind('<Down>', lambda event: drive_back(mqtt_client, window.left_speed_number, window.right_speed_number))
-
-    stop_button = ttk.Button(running_frame, text="Stop")
-    stop_button.grid(row=3, column=2)
-    # stop_button and '<space>' key (note, does not need left_speed_entry, right_speed_entry)
-    stop_button['command'] = lambda: stop(mqtt_client)
-    root.bind('<space>', lambda event: stop(mqtt_client))
-
-    q_button = ttk.Button(running_frame, text="Fumble, Lose Possession")
-    q_button.grid(row=5, column=0)
-    q_button['command'] = (lambda: quit_program(mqtt_client, False))
-
-    e_button = ttk.Button(running_frame, text="Out with an Injury")
-    e_button.grid(row=5, column=4)
-    e_button['command'] = (lambda: quit_program(mqtt_client, True))
-
-
-def window2(root, window):
-    window.next_window()
-    root_2 = tkinter.Toplevel()
-    root.title("TACKLE INCOMING!!!")
-
-    dodge_frame = ttk.Frame(root_2, padding=20, relief='raised')
-    dodge_frame.grid()
-
-    pic = tkinter.PhotoImage(file='tackle_image.gif')
-    also_not_a_button = ttk.Button(dodge_frame, image=pic)
-    also_not_a_button.image = pic
-    also_not_a_button.grid(row=0, column=0)
-    also_not_a_button['command'] = lambda: print('Stop standing there and shake him off!')
-
-    dodge_label = ttk.Label(dodge_frame, text="Dodge Left or Right")
-    dodge_label.grid(row=1, column=0)
-    dodge_entry = ttk.Entry(dodge_frame, width=8)
-    dodge_entry.insert(0, "")
-    dodge_entry.grid(row=2, column=0)
-    dodge_entry['command'] = lambda: dodge(dodge_entry, window)
-
-
-# ----------------------------------------------------------------------
 # Custom callbacks
 # ----------------------------------------------------------------------
-
-def touchdown(mqtt_client, robot):
-    robot.running = False
-    mqtt_client.send_message("drive_inches", int(3), int(600))
 
 
 def dodge(dodge_entry, window):
     random_num = random.randrange(1, 2)
     if random_num == 1:
         dodge_direction = "left"
+        other_dodge_direction = "Left"
     else:
         dodge_direction = "right"
+        other_dodge_direction = "Right"
 
-    if dodge_direction == dodge_entry:
-        window.trigger = True
+    if dodge_direction == dodge_entry or other_dodge_direction == dodge_entry:
+        window.triggered(False)
+        print(5)
     else:
         window.running = False
+        print(6)
 
 
 # def play_wav_file():
-    # File from
-    # Had to convert it to a PCM signed 16-bit little-endian .wav file
-    # http://audio.online-convert.com/convert-to-wav
-    # ev3.Sound.play("/home/robot/csse120/projects/declermr/_____________.wav")
+# File from
+# Had to convert it to a PCM signed 16-bit little-endian .wav file
+# http://audio.online-convert.com/convert-to-wav
+# ev3.Sound.play("/home/robot/csse120/projects/declermr/_____________.wav")
 
 # ----------------------------------------------------------------------
 # Calls  main  to start the ball rolling.
