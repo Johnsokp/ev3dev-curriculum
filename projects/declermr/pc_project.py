@@ -15,8 +15,6 @@ while spinning in a circle.
 The robot will be controlled by using the buttons on a GUI or the keyboard. This is overridden when the player
 is in a tackle event, and the player will be tackled soon.
 
-Stretch goal: feedback on a screen of where the player is.
-
 Author: Matthew De Clerck
 Supporting Code Authors: Matthew De Clerck, Caitlin Coverstone, Kynon Johnson
 """
@@ -28,13 +26,11 @@ from tkinter import ttk
 
 import random
 
-import time
-
 
 class WindowDelegate(object):
     def __init__(self):
-        self.left_speed_number = 500
-        self.right_speed_number = 500
+        self.left_speed_number = 100
+        self.right_speed_number = 100
         self.trigger = False
         self.running = True
         self.flip = 0
@@ -73,17 +69,13 @@ def main():
 def master_gui(root, secondary_root, tertiary_root, window):
     if window.flip == 1:
         if not window.trigger:
-            print(1)
             tertiary_root.iconify()
             secondary_root.deiconify()
             window.flip = 0
         else:
-            print(2)
             secondary_root.iconify()
             tertiary_root.deiconify()
-            print(3)
             window.flip = 0
-    print(0)
     root.after(500, lambda: master_gui(root, secondary_root, tertiary_root, window))
 
 
@@ -222,12 +214,6 @@ def dodge(dodge_entry, window):
         window.running = False
         print(6)
 
-
-# def play_wav_file():
-# File from
-# Had to convert it to a PCM signed 16-bit little-endian .wav file
-# http://audio.online-convert.com/convert-to-wav
-# ev3.Sound.play("/home/robot/csse120/projects/declermr/_____________.wav")
 
 # ----------------------------------------------------------------------
 # Calls  main  to start the ball rolling.

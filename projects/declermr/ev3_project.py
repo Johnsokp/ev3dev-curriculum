@@ -26,7 +26,7 @@ COLOR_NAMES = ["None", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brow
 
 
 def main():
-    robo.ev3.Sound.speak("test test").wait()
+    robo.ev3.Sound.speak("time to score a touchdown").wait()
 
     robot = robo.Snatch3r()
     mqtt_client = com.MqttClient(robot)
@@ -39,18 +39,10 @@ def main():
 
     num_list = []
 
-    """
-    Stretch goal: implement button functions for celebration
-    """
-    # btn.on_up = lambda state:
-    # btn.on_down = lambda state:
-    # btn.on_left = lambda state:
-    # btn.on_right = lambda state:
-
     while robot.running:
         btn.process()
         review_touchdown(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BLUE)
-        mud(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BROWN, num_list)
+        mud(mqtt_client, robot, robo.ev3.ColorSensor.COLOR_BLACK, robo.ev3.ColorSensor.COLOR_BROWN, num_list)
 
 
 # ----------------------------------------------------------------------
@@ -58,31 +50,28 @@ def main():
 # ----------------------------------------------------------------------
 
 
-def mud(mqtt_client, robot, color_to_seek, num_list):
-    random_num = random.randrange(1, 2)
-    if robot.color_sensor.color == color_to_seek:
+def mud(mqtt_client, robot, color_to_seek_1, color_to_seek_2, num_list):
+    random_num = random.randrange(1, 10)
+    if robot.color_sensor.color == color_to_seek_1 or robot.color_sensor.color == color_to_seek_2:
         num_list.append(random_num)
         robo.time.sleep(.01)
         for k in range(len(num_list) - 1):
             print(num_list[k], random_num)
             if num_list[k] == random_num:
-                robot.stop()
                 mqtt_client.send_message("triggered", [True])
-                robo.time.sleep(5)
+                robo.time.sleep(.1)
+                robot.stop()
+                robo.time.sleep(10)
                 break
+    print(robot.color_sensor.color)
     print(num_list)
-    robo.time.sleep(.5)
 
 
 def review_touchdown(mqtt_client, robot, color_to_seek):
-    print(7)
-    robo.time.sleep(.5)
+    robo.time.sleep(.1)
     if robot.color_sensor.color == color_to_seek:
-        print(8)
         mqtt_client.send_message("touchdown")
-        print(9)
         robo.ev3.Sound.speak("Touchdown for Jersey Number 3").wait()
-        print(10)
         robot.drive_inches(3, 600)
         robot.shutdown()
 
